@@ -4,25 +4,26 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { onMounted, ref } from 'vue';
 
 const input = ref('');
+const height = ref('10em');
 const showIcon = ref(false);
-const showInput = ref(true);
+const showInput = ref(false);
 
 const placeholder =
-  'ᚠᛇᚻ᛫ᛒᛦᚦ᛫ᚠᚱᚩᚠᚢᚱ᛫ᚠᛁᚱᚪ᛫ᚷᛖᚻᚹᛦᛚᚳᚢᛗᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ᛬';
+  'ᚠᛇᚻ᛫ᛒᛦᚦ᛫ᚠᚱᚩᚠᚢᚱ᛫ᚠᛁᚱᚪ᛫ᚷᛖᚻᚹᛦᛚᚳᚢᛗᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ';
 
 onMounted(() => {
   setTimeout(() => {
     showIcon.value = true;
     setTimeout(() => {
       showInput.value = true;
-    }, 4550);
+    }, 550);
   }, 50);
 });
 
 function onInput(e: Event) {
   if (e.target instanceof HTMLElement) {
     e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 1 + 'px';
+    e.target.style.height = e.target.scrollHeight + 'px';
   }
 }
 </script>
@@ -38,19 +39,25 @@ function onInput(e: Event) {
         <div></div>
         <textarea
           :rows="1"
-          :placeholder
+          :placeholder="placeholder"
           :onInput="onInput"
           v-model="input"
         ></textarea>
         <div class="group">
+          <input
+            type="text"
+            :placeholder="placeholder.split('').reverse().join('')"
+          />
           <select>
-            <option value="">1</option>
+            <option value="">72 H</option>
+            <option value="">24 H</option>
+            <option value="">12 H</option>
+            <option value="">60 M</option>
+            <option value="">15 M</option>
           </select>
-          <select>
-            <option value="">2</option>
-          </select>
+          <input type="checkbox" />
         </div>
-        <button>foo</button>
+        <button>Create Secret</button>
       </section>
     </Transition>
   </main>
@@ -100,13 +107,15 @@ main {
       width: 100%;
     }
     > textarea {
+      min-height: 3em;
       max-height: 18em;
       resize: none;
-      &::placeholder {
-        overflow: hidden;
-        color: var(--text-sec);
-        white-space: nowrap;
-        text-overflow: ellipsis;
+    }
+    > div.group {
+      display: flex;
+      gap: 1em;
+      > input[type='text'] {
+        width: 100%;
       }
     }
   }
@@ -119,13 +128,13 @@ main {
 
 .expand-enter-to,
 .expand-leave-from {
-  max-height: 3em;
+  max-height: v-bind(height);
 }
 
 .expand-enter-from,
 .expand-leave-to {
   max-height: 0px;
-  transform: translateY(50px);
+  transform: translateY(150px);
   opacity: 0;
 }
 </style>

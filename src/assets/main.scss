@@ -19,6 +19,7 @@ html {
   background: var(--background);
 }
 
+input,
 textarea {
   padding: 0.8em;
   color: var(--text);
@@ -27,6 +28,26 @@ textarea {
   background-color: var(--background-sec);
   border: none;
   border-radius: 0.5em;
+  &:focus {
+    outline: none;
+  }
+  &::placeholder {
+    overflow: hidden;
+    color: var(--text-sec);
+    white-space: nowrap;
+  }
+}
+
+select {
+  padding: 0.8em;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.8em;
+  background-color: var(--background-sec);
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  appearance: none;
   &:focus {
     outline: none;
   }
