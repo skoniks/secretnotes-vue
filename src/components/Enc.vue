@@ -5,10 +5,10 @@ import { computed, ref } from 'vue';
 const input = ref('');
 const secret = ref('');
 const output = computed(() =>
-  AES.encrypt(input.value, secret.value).toString(),
+  AES.encrypt(input.value, secret.value).toString()
 );
 const decode = computed(() =>
-  AES.decrypt(output.value, secret.value).toString(enc.Utf8),
+  AES.decrypt(output.value, secret.value).toString(enc.Utf8)
 );
 </script>
 

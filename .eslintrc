@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "root": true,
+  "ignorePatterns": ["dist"],
+  "env": { "browser": true },
+  "parserOptions": { "ecmaVersion": "latest" },
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/vue3-essential",
+    "@vue/eslint-config-typescript",
+    "@vue/eslint-config-prettier/skip-formatting"
+  ],
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "linebreak-style": ["error", "unix"],
+    "lines-between-class-members": ["error", "always"],
+    "vue/multi-word-component-names": "off"
+  }
+}
