@@ -46,25 +46,6 @@ select {
   appearance: none;
 }
 
-button {
-  @include interface;
-  background-color: #2688eb;
-  box-shadow: inset 0 -4px #157ce5;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
-  &:hover,
-  &:focus {
-    background-color: #57a3f0;
-    box-shadow: inset 0px -4px 0px #3f96ed;
-  }
-  &:active {
-    background-color: #1370cd;
-    box-shadow: inset 0px -4px 0px #1163b6;
-  }
-}
-
 label.checkbox {
   @include interface;
   text-align: center;
@@ -76,6 +57,44 @@ label.checkbox {
     display: none;
     &:checked + span {
       visibility: visible;
+    }
+  }
+}
+
+button {
+  @include interface;
+  background-color: #2688eb;
+  box-shadow: inset 0 -4px #157ce5;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  &:hover,
+  &:focus {
+    background-color: #57a3f0;
+    box-shadow: inset 0px -4px 0px #3f96ed;
+  }
+  &:active {
+    background-color: #1370cd;
+    box-shadow: inset 0px -4px 0px #1163b6;
+  }
+  &.outline {
+    color: #2688eb;
+    background-color: rgba(#2688eb, 0.1);
+    border: 1px solid #2688eb;
+    box-shadow: none;
+    &:hover,
+    &:focus {
+      color: #57a3f0;
+      background-color: rgba(#57a3f0, 0.1);
+      border-color: #57a3f0;
+    }
+    &:active {
+      color: #1370cd;
+      background-color: rgba(#1370cd, 0.1);
+      border-color: #1370cd;
     }
   }
 }

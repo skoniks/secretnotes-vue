@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { faCheck, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { AES } from 'crypto-js';
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 
 const input = ref('');
 const secret = ref('');
 const expire = ref('259200');
-const height = ref('12em');
 const compact = ref(true);
 const showIcon = ref(false);
 const showInput = ref(false);
 
 const placeholder =
   'ᚠᛇᚻ᛫ᛒᛦᚦ᛫ᚠᚱᚩᚠᚢᚱ᛫ᚠᛁᚱᚪ᛫ᚷᛖᚻᚹᛦᛚᚳᚢᛗᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ';
+
+onBeforeMount(() => {
+  const start = localStorage.getItem('start');
+  const visit = Date.now() - Number(start) < 60 * 60 * 1000;
+  if (visit) showIcon.value = showInput.value = true;
+  localStorage.setItem('start', Date.now().toString());
+});
 
 onMounted(() => {
   setTimeout(() => {
@@ -30,9 +35,7 @@ function onInput(e: Event) {
     e.target.style.height = e.target.scrollHeight + 'px';
   }
 }
-function encrypt() {
-  alert(AES.encrypt(input.value, secret.value).toString());
-}
+function encrypt() {}
 </script>
 
 <template>
@@ -71,6 +74,7 @@ function encrypt() {
           </label>
         </div>
         <button @click="encrypt">{{ placeholder.slice(46, 60) }}</button>
+        <!-- <button class="outline">{{ placeholder.slice(46, 60) }}</button> -->
       </section>
     </Transition>
   </main>
@@ -127,7 +131,7 @@ main {
     > div.group {
       display: flex;
       gap: 1em;
-      > input[type='text'] {
+      > input {
         width: 100%;
       }
       > label.checkbox {
@@ -147,7 +151,7 @@ main {
 
 .expand-enter-to,
 .expand-leave-from {
-  max-height: v-bind(height);
+  max-height: 12em;
 }
 
 .expand-enter-from,
