@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { AES } from 'crypto-js';
 import { onMounted, ref } from 'vue';
 
 const input = ref('');
-const height = ref('10em');
+const secret = ref('');
+const expire = ref('259200');
+const height = ref('12em');
+const compact = ref(true);
 const showIcon = ref(false);
 const showInput = ref(false);
 
@@ -16,7 +20,7 @@ onMounted(() => {
     showIcon.value = true;
     setTimeout(() => {
       showInput.value = true;
-    }, 550);
+    }, 500);
   }, 50);
 });
 
@@ -25,6 +29,9 @@ function onInput(e: Event) {
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   }
+}
+function encrypt() {
+  alert(AES.encrypt(input.value, secret.value).toString());
 }
 </script>
 
@@ -39,6 +46,7 @@ function onInput(e: Event) {
         <div></div>
         <textarea
           :rows="1"
+          :spellcheck="false"
           :placeholder="placeholder"
           :onInput="onInput"
           v-model="input"
@@ -46,18 +54,23 @@ function onInput(e: Event) {
         <div class="group">
           <input
             type="text"
+            :spellcheck="false"
             :placeholder="placeholder.split('').reverse().join('')"
+            v-model="secret"
           />
-          <select>
-            <option value="">72 H</option>
-            <option value="">24 H</option>
-            <option value="">12 H</option>
-            <option value="">60 M</option>
-            <option value="">15 M</option>
+          <select tabindex="-1" v-model="expire">
+            <option value="259200">72 H</option>
+            <option value="86400">24 H</option>
+            <option value="43200">12 H</option>
+            <option value="3600">60 M</option>
+            <option value="300">15 M</option>
           </select>
-          <input type="checkbox" />
+          <label class="checkbox">
+            <input type="checkbox" v-model="compact" />
+            <span><FontAwesomeIcon :icon="faCheck" /></span>
+          </label>
         </div>
-        <button>Create Secret</button>
+        <button @click="encrypt">{{ placeholder.slice(46, 60) }}</button>
       </section>
     </Transition>
   </main>
@@ -117,6 +130,12 @@ main {
       > input[type='text'] {
         width: 100%;
       }
+      > label.checkbox {
+        flex: 0 0 3em;
+      }
+    }
+    > button {
+      user-select: none;
     }
   }
 }
@@ -134,7 +153,7 @@ main {
 .expand-enter-from,
 .expand-leave-to {
   max-height: 0px;
-  transform: translateY(150px);
+  transform: translateY(12em);
   opacity: 0;
 }
 </style>
