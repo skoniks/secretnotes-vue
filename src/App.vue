@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { faCheck, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { toDataURL } from 'qrcode';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { encryptBlob, md5 } from './plugins/crypto';
 
 const input = ref('');
+const output = ref('');
+const qrcode = ref('');
 const secret = ref('');
 const expire = ref('259200');
 const compact = ref(true);
 const showIcon = ref(false);
 const showInput = ref(false);
+const showOutput = ref(false);
 const inputFile = ref<HTMLInputElement>();
 
 const placeholder =
@@ -81,9 +85,8 @@ async function onUpload() {
     formdata.append('file', blob);
   } else return;
   formdata.append('secret', md5(secret.value));
-  formdata.append('compact', String(compact.value));
   formdata.append('expire', expire.value);
-  // console.log([...formdata.values()]);
+  formdata.append('compact', String(compact.value));
   const request = new XMLHttpRequest();
   request.upload.onprogress = (e) => {
     console.log(e.loaded, e.total, (e.loaded / e.total) * 100);
@@ -91,11 +94,25 @@ async function onUpload() {
   request.onprogress = (e) => {
     console.log(e.loaded, e.total, (e.loaded / e.total) * 100);
   };
-  request.onload = () => {
-    console.log(request.responseText);
+  request.onload = async () => {
+    const { statusCode, result } = await JSON.parse(request.responseText);
+    if (statusCode !== 200) return;
+    output.value = location.origin + '#' + result;
+    qrcode.value = await toDataURL(output.value, {
+      color: { dark: '#ffffff', light: '#1e232a' },
+      scale: 10
+    });
+    showInput.value = false;
+    showOutput.value = true;
+    setTimeout(() => {}, 1000);
   };
-  request.open('post', 'http://localhost:3000/');
+  request.open('post', 'http://localhost:3000/api');
   request.send(formdata);
+}
+async function onReset() {
+  output.value = '';
+  showOutput.value = false;
+  showInput.value = true;
 }
 </script>
 
@@ -103,6 +120,11 @@ async function onUpload() {
   <main>
     <section class="icon" :class="{ show: showIcon }">
       <FontAwesomeIcon :icon="faUserSecret" />
+      <Transition>
+        <div class="qrcode" v-show="showOutput">
+          <img :src="qrcode" />
+        </div>
+      </Transition>
       <div class="preload"></div>
     </section>
     <Transition name="expand">
@@ -140,6 +162,15 @@ async function onUpload() {
         <button @click="onUpload">{{ placeholder.slice(46, 60) }}</button>
       </section>
     </Transition>
+    <Transition name="expand">
+      <section class="output" v-show="showOutput">
+        <div></div>
+        <input type="text" :value="output" :readonly="true" />
+        <button class="outline" @click="onReset">
+          {{ placeholder.slice(86, 99) }}
+        </button>
+      </section>
+    </Transition>
   </main>
 </template>
 
@@ -162,6 +193,13 @@ main {
       width: 100%;
       height: 100%;
     }
+    > div.qrcode {
+      position: absolute;
+      > img {
+        width: 100%;
+        height: 100%;
+      }
+    }
     > div.preload {
       position: absolute;
       width: 200%;
@@ -169,12 +207,13 @@ main {
       border-radius: 50%;
       box-shadow: inset 0 0 0 125px var(--background);
       transition: box-shadow 1s ease;
+      pointer-events: none;
     }
     &.show > div.preload {
       box-shadow: inset 0 0 0 0 var(--background);
     }
   }
-  > section.input {
+  > section {
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -186,28 +225,41 @@ main {
     > * {
       width: 100%;
     }
-    > textarea {
-      min-height: 3em;
-      max-height: 18em;
-      resize: none;
-    }
-    > div.group {
-      display: flex;
-      gap: 1em;
-      > input {
-        width: 100%;
+    &.input {
+      > textarea {
+        min-height: 3em;
+        max-height: 18em;
+        resize: none;
       }
-      > label.checkbox {
-        flex: 0 0 3em;
+      > div.group {
+        display: flex;
+        gap: 1em;
+        > input {
+          width: 100%;
+        }
+        > label.checkbox {
+          flex: 0 0 3em;
+          user-select: none;
+        }
+      }
+      > input[type='file'] {
+        display: none;
       }
     }
-    // > input[type='file'] {
-    //   display: none;
-    // }
     > button {
       user-select: none;
     }
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 
 .expand-leave-active,
@@ -223,7 +275,7 @@ main {
 .expand-enter-from,
 .expand-leave-to {
   max-height: 0px;
-  transform: translateY(12em);
+  // transform: translateY(12em);
   opacity: 0;
 }
 </style>
