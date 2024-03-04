@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { faCheck, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { encryptBlob, md5 } from './plugins/crypto';
 
 const input = ref('');
 const secret = ref('');
@@ -9,15 +10,27 @@ const expire = ref('259200');
 const compact = ref(true);
 const showIcon = ref(false);
 const showInput = ref(false);
+const inputFile = ref<HTMLInputElement>();
 
 const placeholder =
   'ᚠᛇᚻ᛫ᛒᛦᚦ᛫ᚠᚱᚩᚠᚢᚱ᛫ᚠᛁᚱᚪ᛫ᚷᛖᚻᚹᛦᛚᚳᚢᛗᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ';
+
+watch([expire, compact], () => {
+  const options = { expire: expire.value, compact: compact.value };
+  localStorage.setItem('options', JSON.stringify(options));
+});
 
 onBeforeMount(() => {
   const start = localStorage.getItem('start');
   const visit = Date.now() - Number(start) < 60 * 60 * 1000;
   if (visit) showIcon.value = showInput.value = true;
   localStorage.setItem('start', Date.now().toString());
+  const options = localStorage.getItem('options');
+  if (options && typeof options === 'string') {
+    const parsed = JSON.parse(options);
+    expire.value = parsed.expire;
+    compact.value = parsed.compact;
+  }
 });
 
 onMounted(() => {
@@ -34,8 +47,56 @@ function onInput(e: Event) {
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   }
+  if (inputFile.value?.files?.length) {
+    inputFile.value.value = '';
+    if (e instanceof InputEvent) {
+      input.value = e.data || '';
+    }
+  }
 }
-function encrypt() {}
+function onDrop(e: DragEvent) {
+  if (!inputFile.value || !e.dataTransfer) return;
+  inputFile.value.files = e.dataTransfer.files;
+  e.preventDefault(), onChange();
+}
+function onPaste(e: ClipboardEvent) {
+  if (!inputFile.value || !e.clipboardData) return;
+  inputFile.value.files = e.clipboardData.files;
+  e.preventDefault(), onChange();
+}
+function onChange() {
+  if (!inputFile.value?.files) return;
+  const [file] = inputFile.value.files;
+  if (file) input.value = file.name;
+}
+async function onUpload() {
+  const formdata = new FormData();
+  if (inputFile.value?.files?.length) {
+    const [file] = inputFile.value.files;
+    const blob = await encryptBlob(file, secret.value);
+    formdata.append('file', blob);
+  } else if (input.value.length) {
+    const file = new Blob([input.value], { type: 'plain/text' });
+    const blob = await encryptBlob(file, secret.value);
+    formdata.append('file', blob);
+  } else return;
+  formdata.append('secret', md5(secret.value));
+  formdata.append('compact', String(compact.value));
+  formdata.append('expire', expire.value);
+  // console.log([...formdata.values()]);
+  const request = new XMLHttpRequest();
+  request.upload.onprogress = (e) => {
+    console.log(e.loaded, e.total, (e.loaded / e.total) * 100);
+  };
+  request.onprogress = (e) => {
+    console.log(e.loaded, e.total, (e.loaded / e.total) * 100);
+  };
+  request.onload = () => {
+    console.log(request.responseText);
+  };
+  request.open('post', 'http://localhost:3000/');
+  request.send(formdata);
+}
 </script>
 
 <template>
@@ -50,8 +111,10 @@ function encrypt() {}
         <textarea
           :rows="1"
           :spellcheck="false"
-          :placeholder="placeholder"
-          :onInput="onInput"
+          :placeholder
+          :onDrop
+          :onPaste
+          :onInput
           v-model="input"
         ></textarea>
         <div class="group">
@@ -73,8 +136,8 @@ function encrypt() {}
             <span><FontAwesomeIcon :icon="faCheck" /></span>
           </label>
         </div>
-        <button @click="encrypt">{{ placeholder.slice(46, 60) }}</button>
-        <!-- <button class="outline">{{ placeholder.slice(46, 60) }}</button> -->
+        <input type="file" ref="inputFile" :onChange />
+        <button @click="onUpload">{{ placeholder.slice(46, 60) }}</button>
       </section>
     </Transition>
   </main>
@@ -138,6 +201,9 @@ main {
         flex: 0 0 3em;
       }
     }
+    // > input[type='file'] {
+    //   display: none;
+    // }
     > button {
       user-select: none;
     }
