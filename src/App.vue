@@ -15,7 +15,9 @@ const compact = ref(true);
 const showIcon = ref(false);
 const showInput = ref(false);
 const showOutput = ref(false);
+const inputText = ref<HTMLTextAreaElement>();
 const inputFile = ref<HTMLInputElement>();
+const resize = new ResizeObserver(() => onResize());
 
 const placeholder =
   'ᚠᛇᚻ᛫ᛒᛦᚦ᛫ᚠᚱᚩᚠᚢᚱ᛫ᚠᛁᚱᚪ᛫ᚷᛖᚻᚹᛦᛚᚳᚢᛗᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ';
@@ -39,6 +41,8 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  onResize();
+  if (inputText.value) resize.observe(inputText.value);
   setTimeout(() => {
     showIcon.value = true;
     setTimeout(() => {
@@ -47,11 +51,13 @@ onMounted(() => {
   }, 50);
 });
 
+function onResize() {
+  if (!inputText.value) return;
+  inputText.value.style.height = 'auto';
+  inputText.value.style.height = inputText.value.scrollHeight + 'px';
+}
 function onInput(e: Event) {
-  if (e.target instanceof HTMLInputElement) {
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
-  }
+  onResize();
   if (inputFile.value?.files?.length) {
     inputFile.value.value = '';
     if (e instanceof InputEvent) {
@@ -132,8 +138,10 @@ async function onReset() {
       <section class="input" v-show="showInput">
         <div></div>
         <textarea
-          :rows="2"
-          :spellcheck="false"
+          rows="2"
+          ref="inputText"
+          autofocus="true"
+          spellcheck="false"
           :placeholder
           :onDrop
           :onPaste
@@ -228,6 +236,7 @@ main {
     }
     &.input {
       > textarea {
+        min-height: 4.375em;
         max-height: 18em;
         resize: none;
       }
@@ -274,7 +283,7 @@ main {
 
 .expand-enter-from,
 .expand-leave-to {
-  max-height: 0px;
+  max-height: 0;
   // transform: translateY(12em);
   opacity: 0;
 }
