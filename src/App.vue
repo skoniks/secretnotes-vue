@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { toDataURL } from 'qrcode';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { encryptBlob, md5 } from './plugins/crypto';
+import { formatFile } from './plugins/file';
 
 const input = ref('');
 const output = ref('');
@@ -47,7 +48,7 @@ onMounted(() => {
 });
 
 function onInput(e: Event) {
-  if (e.target instanceof HTMLElement) {
+  if (e.target instanceof HTMLInputElement) {
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
   }
@@ -59,19 +60,19 @@ function onInput(e: Event) {
   }
 }
 function onDrop(e: DragEvent) {
-  if (!inputFile.value || !e.dataTransfer) return;
+  if (!inputFile.value || !e.dataTransfer?.files.length) return;
   inputFile.value.files = e.dataTransfer.files;
   e.preventDefault(), onChange();
 }
 function onPaste(e: ClipboardEvent) {
-  if (!inputFile.value || !e.clipboardData) return;
+  if (!inputFile.value || !e.clipboardData?.files.length) return;
   inputFile.value.files = e.clipboardData.files;
   e.preventDefault(), onChange();
 }
 function onChange() {
   if (!inputFile.value?.files) return;
   const [file] = inputFile.value.files;
-  if (file) input.value = file.name;
+  if (file) input.value = formatFile(file);
 }
 async function onUpload() {
   const formdata = new FormData();
@@ -131,7 +132,7 @@ async function onReset() {
       <section class="input" v-show="showInput">
         <div></div>
         <textarea
-          :rows="1"
+          :rows="2"
           :spellcheck="false"
           :placeholder
           :onDrop
@@ -227,7 +228,6 @@ main {
     }
     &.input {
       > textarea {
-        min-height: 3em;
         max-height: 18em;
         resize: none;
       }
@@ -277,5 +277,9 @@ main {
   max-height: 0px;
   // transform: translateY(12em);
   opacity: 0;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

@@ -14,6 +14,11 @@ export function blobToBase64(data: Blob): Promise<string> {
   });
 }
 
+export function formatFile(data: File): string {
+  const size = (data.size / 1024 / 1024).toFixed(2);
+  return `📁: ${data.name} (${size} KB)`;
+}
+
 // export const fileFromBase64 = (url: string, name: string) => {
 //   const element = document.createElement('a');
 //   element.href = url;
