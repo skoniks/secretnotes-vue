@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Nunito-fallback';
-  size-adjust: 101.44000000000005%;
+  size-adjust: 101.5%;
   ascent-override: 110%;
   src: local('Arial');
 }
@@ -34,6 +34,7 @@ html {
     font-family: var(--font-family);
     div#app {
       display: flex;
+      flex-flow: column;
       align-items: center;
       justify-content: center;
       width: 100vw;
