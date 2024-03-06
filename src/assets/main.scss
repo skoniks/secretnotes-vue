@@ -1,16 +1,8 @@
-@font-face {
-  font-family: 'Noto Sans fallback';
-  // size-adjust: 106.5%;
-  // ascent-override: 102%;
-  src: local('Arial');
-}
-
 :root {
   --text: #ffffff;
   --text-sec: #8898af;
   --background: #1e232a;
   --background-sec: #242a33;
-  // --font-family: 'Noto Sans Runic', 'Noto Sans', 'Nunito-fallback';
   --font-family: 'Noto Sans Runic', 'Noto Sans';
 }
 
@@ -122,4 +114,14 @@ button {
       border-color: #1370cd;
     }
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }

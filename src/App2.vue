@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useRouteStore } from './stores/route';
+import { useSecretStore } from './stores/secret';
 
 const routeStore = useRouteStore();
+const secretStore = useSecretStore();
 
 const preload = ref(true);
 const animate = ref(true);
@@ -15,9 +17,11 @@ const mainEl = ref<HTMLElement>();
 const mainObs = new ResizeObserver(onResize);
 
 onBeforeMount(() => {
-  preload.value = false;
-  animate.value = false;
-  main.value = true;
+  if (secretStore.time > Date.now() - 60000) {
+    preload.value = false;
+    animate.value = false;
+    main.value = true;
+  }
 });
 
 onMounted(() => {
@@ -38,11 +42,23 @@ function onResize() {
   <header :class="{ animate }" :style="{ transform: headerT }">
     <FontAwesomeIcon :icon="faUserSecret" />
     <div class="preload" :class="{ hide: !preload }"></div>
-    <div class="qrcode"><img :src="''" /></div>
+    <Transition>
+      <div class="qrcode" v-show="routeStore.route == 'result'">
+        <img :src="secretStore.qrcode" />
+      </div>
+    </Transition>
   </header>
   <main ref="mainEl" :class="{ hide: !main, animate }">
     <Transition name="route">
       <component :is="routeStore.view"></component>
+    </Transition>
+    <Transition>
+      <div class="loader" v-show="secretStore.loader">
+        <div class="progress">
+          <FontAwesomeIcon :icon="faCircleNotch" :spin="true" />
+          <span>{{ secretStore.progress }}%</span>
+        </div>
+      </div>
     </Transition>
   </main>
 </template>
@@ -102,6 +118,23 @@ main {
   &.hide {
     transform: translateY(150%);
     opacity: 0;
+  }
+  > div.loader {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+    inset: 0;
+    > div.progress {
+      padding: 0.8em;
+      background-color: rgba(#2688eb, 0.1);
+      border: 1px solid #2688eb;
+      border-radius: 0.5em;
+      > span {
+        margin-left: 0.5em;
+      }
+    }
   }
 }
 

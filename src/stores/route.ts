@@ -13,7 +13,8 @@ const routes = {
 type Route = keyof typeof routes;
 
 export const useRouteStore = defineStore('route', () => {
-  const route = ref<Route>('input');
+  const route = ref<Route>('result');
+  // const route = ref<Route>('input');
   const view = computed(() => routes[route.value]);
   const goto = (key: Route) => (route.value = key);
   return { route, view, goto };

@@ -17,11 +17,11 @@ export function blobToBase64(data: Blob): Promise<string> {
 }
 
 export async function encryptBlob(data: Blob, key: string): Promise<Blob> {
-  const [type, input] = (await blobToBase64(data)).split(';base64,');
-  return await base64ToBlob(`${type};base64,${encrypt(input, key)}`);
+  const [type, content] = (await blobToBase64(data)).split(';base64,');
+  return await base64ToBlob(`${type};base64,${encrypt(content, key)}`);
 }
 
 export async function decryptBlob(data: Blob, key: string): Promise<Blob> {
-  const [type, input] = (await blobToBase64(data)).split(';base64,');
-  return await base64ToBlob(`${type};base64,${decrypt(input, key)}`);
+  const [type, content] = (await blobToBase64(data)).split(';base64,');
+  return await base64ToBlob(`${type};base64,${decrypt(content, key)}`);
 }
