@@ -1,24 +1,15 @@
 <script setup lang="ts">
 import { placeholder } from '@/plugins/const';
-import { useRouteStore } from '@/stores/route';
 import { faCheck, faFileZipper } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { onMounted, ref } from 'vue';
-
-const { goto } = useRouteStore();
+import { ref } from 'vue';
 
 const input = ref('');
 const secret = ref('');
 const expire = ref('259200');
 const compact = ref(true);
-
 const fileEl = ref<HTMLInputElement>();
 const inputEl = ref<HTMLTextAreaElement>();
-const inputObs = new ResizeObserver(onResize);
-
-onMounted(() => {
-  inputObs.observe(inputEl.value!);
-});
 
 function onResize() {
   if (!inputEl.value) return;
