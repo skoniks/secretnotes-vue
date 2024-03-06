@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Noto Sans fallback';
-  size-adjust: 106.5%;
-  ascent-override: 102%;
+  // size-adjust: 106.5%;
+  // ascent-override: 102%;
   src: local('Arial');
 }
 
@@ -10,7 +10,8 @@
   --text-sec: #8898af;
   --background: #1e232a;
   --background-sec: #242a33;
-  --font-family: 'Noto Sans Runic', 'Noto Sans', 'Nunito-fallback';
+  // --font-family: 'Noto Sans Runic', 'Noto Sans', 'Nunito-fallback';
+  --font-family: 'Noto Sans Runic', 'Noto Sans';
 }
 
 ::-webkit-scrollbar {
@@ -37,8 +38,8 @@ html {
       flex-flow: column;
       align-items: center;
       justify-content: center;
-      width: 100dvw;
-      height: 100dvh;
+      width: 100svw;
+      height: 100svh;
     }
   }
 }
