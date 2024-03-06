@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useRouteStore } from './stores/route';
 
 const routeStore = useRouteStore();
@@ -9,14 +9,15 @@ const routeStore = useRouteStore();
 const preload = ref(true);
 const animate = ref(true);
 const headerY = ref('0');
+const headerT = computed(() => `translateY(calc(${headerY.value}))`);
 const main = ref(false);
 const mainEl = ref<HTMLElement>();
 const mainObs = new ResizeObserver(onResize);
 
 onBeforeMount(() => {
-  // preload.value = false;
-  // animate.value = false;
-  // main.value = true;
+  preload.value = false;
+  animate.value = false;
+  main.value = true;
 });
 
 onMounted(() => {
@@ -29,12 +30,12 @@ onMounted(() => {
 function onResize() {
   if (!main.value || !mainEl.value) return;
   const { offsetHeight = 0 } = mainEl.value;
-  headerY.value = `-50% - ${offsetHeight / 2}px - 1em`;
+  headerY.value = `-${offsetHeight / 2}px`;
 }
 </script>
 
 <template>
-  <header :class="{ animate }">
+  <header :class="{ animate }" :style="{ transform: headerT }">
     <FontAwesomeIcon :icon="faUserSecret" />
     <div class="preload" :class="{ hide: !preload }"></div>
     <div class="qrcode"><img :src="''" /></div>
@@ -47,20 +48,20 @@ function onResize() {
 </template>
 
 <style scoped lang="scss">
+$icon-size: 150px;
 header {
-  $icon-size: 125px;
   position: absolute;
   z-index: 1;
   width: $icon-size;
   height: $icon-size;
   overflow: hidden;
-  transform: translateY(calc(v-bind(headerY)));
   &.animate {
     transition: transform 1s ease;
   }
   > svg {
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 95%;
+    padding: 2.5%;
   }
   > div.preload {
     position: absolute;
@@ -93,7 +94,8 @@ main {
   position: relative;
   width: 100vw;
   max-width: 30em;
-  padding: 0 1em;
+  padding: 1em;
+  transform: translateY($icon-size / 2);
   transition:
     transform 1s ease,
     opacity 1s ease;

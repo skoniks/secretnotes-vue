@@ -2,7 +2,7 @@
 import { useRouteStore } from '@/stores/route';
 
 const { goto } = useRouteStore();
-setTimeout(() => goto('input'), 3000);
+// setTimeout(() => goto('input'), 3000);
 </script>
 
 <template>

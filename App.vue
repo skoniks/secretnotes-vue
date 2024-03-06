@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { faCheck, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { toDataURL } from 'qrcode';
@@ -291,4 +291,4 @@ main {
 ::-webkit-scrollbar {
   display: none;
 }
-</style>
+</style> -->
