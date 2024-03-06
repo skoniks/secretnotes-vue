@@ -1,4 +1,5 @@
-import '@fontsource/nunito';
+import '@fontsource/noto-sans';
+import '@fontsource/noto-sans-runic';
 import './assets/main.scss';
 
 import { createPinia } from 'pinia';

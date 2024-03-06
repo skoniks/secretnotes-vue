@@ -95,7 +95,7 @@ main {
   width: 100vw;
   max-width: 30em;
   padding: 1em;
-  transform: translateY($icon-size / 2);
+  transform: translateY(calc($icon-size / 2));
   transition:
     transform 1s ease,
     opacity 1s ease;

@@ -13,7 +13,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@fontsource/nunito": "^5.0.16",
+    "@fontsource/noto-sans": "^5.0.19",
+    "@fontsource/noto-sans-runic": "^5.0.19",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.6",
@@ -43,7 +44,7 @@
     "stylelint-config-recommended-vue": "^1.5.0",
     "stylelint-prettier": "^5.0.0",
     "typescript": "~5.3.3",
-    "vite": "^5.1.4",
-    "vue-tsc": "^2.0.3"
+    "vite": "^5.1.5",
+    "vue-tsc": "^2.0.5"
   }
 }
