@@ -10,7 +10,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 
 const { goto } = useRouteStore();
-const { expire, compact, loader, progress, result } =
+const { expire, compact, error, loader, progress, result } =
   storeToRefs(useSecretStore());
 
 const input = ref('');
@@ -92,10 +92,11 @@ async function onSubmit() {
         result.value = request.response.result;
         goto('result', `/${result.value}`);
       }, 500);
-    }
+    } else error.value = true;
     setTimeout(() => (loader.value = false), 500);
   };
   request.onerror = () => {
+    error.value = true;
     setTimeout(() => (loader.value = false), 500);
   };
   request.open('PUT', import.meta.env.VITE_API_URL);

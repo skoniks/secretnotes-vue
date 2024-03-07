@@ -40,6 +40,9 @@ function onResize() {
 
 <template>
   <header :class="{ animate }" :style="{ transform: headerT }">
+    <Transition>
+      <div class="error" v-show="secretStore.error"></div>
+    </Transition>
     <FontAwesomeIcon :icon="faUserSecret" />
     <div class="preload" :class="{ hide: !preload }"></div>
     <Transition>
@@ -75,9 +78,18 @@ header {
     transition: transform 1s ease;
   }
   > svg {
+    position: relative;
     width: 95%;
     height: 95%;
     padding: 2.5%;
+  }
+  > div.error {
+    position: absolute;
+    top: 45px;
+    left: 45px;
+    width: 60px;
+    height: 30px;
+    background-color: #d92403;
   }
   > div.preload {
     position: absolute;

@@ -8,7 +8,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 
 const { goto } = useRouteStore();
-const { loader, progress } = storeToRefs(useSecretStore());
+const { error, loader, progress } = storeToRefs(useSecretStore());
 
 const output = ref('');
 const secret = ref('');
@@ -49,10 +49,11 @@ async function onSubmit() {
         saveBlob(blob, name || 'file');
         goto('input');
       }
-    }
+    } else error.value = true;
     loader.value = false;
   };
   request.onerror = () => {
+    error.value = true;
     setTimeout(() => (loader.value = false), 500);
   };
   request.open('POST', import.meta.env.VITE_API_URL);

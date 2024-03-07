@@ -12,12 +12,21 @@ export const useSecretStore = defineStore('secret', () => {
   const expire = ref(cache.expire);
   const compact = ref(cache.compact);
 
+  let errorTimer: NodeJS.Timeout;
+  const error = ref(false);
   const loader = ref(false);
   const progress = ref(0);
   const result = ref('');
   const qrcode = ref('');
 
   watch([expire, compact], updateCache);
+  watch(error, (value) => {
+    if (!value) return;
+    clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => {
+      error.value = false;
+    }, 1000);
+  });
   updateCache();
 
   function updateCache() {
@@ -27,5 +36,5 @@ export const useSecretStore = defineStore('secret', () => {
       compact: compact.value
     });
   }
-  return { time, expire, compact, loader, progress, result, qrcode };
+  return { time, expire, compact, error, loader, progress, result, qrcode };
 });
