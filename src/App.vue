@@ -17,7 +17,7 @@ const mainEl = ref<HTMLElement>();
 const mainObs = new ResizeObserver(onResize);
 
 onBeforeMount(() => {
-  if (secretStore.time > Date.now() - 60000) {
+  if (secretStore.time > Date.now() - 300 * 1000) {
     preload.value = false;
     animate.value = false;
     main.value = true;

@@ -129,7 +129,6 @@ async function onSubmit() {
       <select tabindex="-1" v-model="expire">
         <option value="259200">72 H</option>
         <option value="86400">24 H</option>
-        <option value="43200">12 H</option>
         <option value="3600">60 M</option>
         <option value="900">15 M</option>
       </select>
