@@ -1,3 +1,4 @@
+import { mime } from './const';
 import { decrypt, encrypt } from './crypto';
 
 export function base64ToBlob(data: string): Promise<Blob> {
@@ -14,6 +15,14 @@ export function blobToBase64(data: Blob): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(data);
   });
+}
+
+export function saveBlob(data: Blob, name: string) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(data);
+  a.download = name + '.' + mime[data.type];
+  document.body.appendChild(a), a.click();
+  document.body.removeChild(a);
 }
 
 export async function encryptBlob(data: Blob, key: string): Promise<Blob> {

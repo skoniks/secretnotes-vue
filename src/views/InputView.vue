@@ -50,7 +50,7 @@ function onPaste(e: ClipboardEvent) {
 function onSelect() {
   fileEl.value!.click();
 }
-function onChange() {
+async function onChange() {
   if (!fileEl.value?.files?.length) return;
   const [file] = fileEl.value.files;
   if (file.size > 128 * 1024 * 1024) {
@@ -70,7 +70,7 @@ async function onSubmit() {
     const blob = await encryptBlob(file, secret.value);
     formdata.append('file', blob);
   } else if (input.value.length) {
-    const file = new Blob([input.value], { type: 'plain/text' });
+    const file = new Blob([input.value], { type: 'text/plain' });
     const blob = await encryptBlob(file, secret.value);
     formdata.append('file', blob);
   } else {
@@ -85,15 +85,12 @@ async function onSubmit() {
     progress.value = Math.round((e.loaded / e.total) * 100);
     console.log('u', e.loaded, e.total, (e.loaded / e.total) * 100);
   };
-  request.onprogress = (e) => {
-    console.log('d', e.loaded, e.total, (e.loaded / e.total) * 100);
-  };
   request.onload = () => {
-    const response = JSON.parse(request.responseText);
-    if (response.statusCode === 200) {
+    console.log(request.status, request.response);
+    if (request.status >= 200 && request.status < 300) {
       setTimeout(() => {
-        result.value = response.result;
-        goto('result');
+        result.value = request.response.result;
+        goto('result', `/${result.value}`);
       }, 500);
     }
     setTimeout(() => (loader.value = false), 500);
@@ -101,7 +98,8 @@ async function onSubmit() {
   request.onerror = () => {
     setTimeout(() => (loader.value = false), 500);
   };
-  request.open('post', import.meta.env.VITE_API_URL);
+  request.open('PUT', import.meta.env.VITE_API_URL);
+  request.responseType = 'json';
   request.send(formdata);
 }
 </script>

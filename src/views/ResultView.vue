@@ -10,7 +10,7 @@ import { computed, onMounted, ref } from 'vue';
 
 const { goto } = useRouteStore();
 const { qrcode, result } = storeToRefs(useSecretStore());
-const url = computed(() => `${location.origin}#${result.value}`);
+const url = computed(() => `${location.origin}/${result.value}`);
 const inputEl = ref<HTMLInputElement>();
 
 onMounted(() => {
@@ -41,7 +41,9 @@ function onCopy() {
         <FontAwesomeIcon :icon="faCopy" />
       </button>
     </div>
-    <button @click="goto('input')">{{ placeholder.slice(46, 60) }}</button>
+    <button class="alt" @click="goto('input')">
+      {{ placeholder.slice(46, 60) }}
+    </button>
   </section>
 </template>
 

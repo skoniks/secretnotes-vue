@@ -4,8 +4,8 @@ import './assets/main.scss';
 
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import App2 from './App2.vue';
+import App from './App.vue';
 
-const app = createApp(App2);
+const app = createApp(App);
 app.use(createPinia());
 app.mount('#app');
