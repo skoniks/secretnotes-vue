@@ -138,3 +138,7 @@ export const mime: Record<string, string> = {
   'application/x-compress': 'z',
   'application/zip': 'zip'
 };
+
+export const mimeRev = Object.fromEntries(
+  Object.entries(mime).map(([k, v]) => [v, k])
+);

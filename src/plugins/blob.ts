@@ -1,4 +1,4 @@
-import { mime } from './const';
+import { mime, mimeRev } from './const';
 import { decrypt, encrypt } from './crypto';
 
 export function base64ToBlob(data: string): Promise<Blob> {
@@ -18,9 +18,10 @@ export function blobToBase64(data: Blob): Promise<string> {
 }
 
 export function saveBlob(data: Blob, name: string) {
+  const ext = extFromType(data.type);
   const a = document.createElement('a');
   a.href = URL.createObjectURL(data);
-  a.download = name + '.' + mime[data.type];
+  a.download = name + (ext ? '.' + ext : '');
   document.body.appendChild(a), a.click();
   document.body.removeChild(a);
 }
@@ -33,4 +34,22 @@ export async function encryptBlob(data: Blob, key: string): Promise<Blob> {
 export async function decryptBlob(data: Blob, key: string): Promise<Blob> {
   const [type, content] = (await blobToBase64(data)).split(';base64,');
   return await base64ToBlob(`${type};base64,${decrypt(content, key)}`);
+}
+
+export async function fileToBlob(file: File): Promise<Blob> {
+  const buffer = await file.arrayBuffer();
+  const [, ext] = file.name.match(/\.([^.]+)$/) || [];
+  const type = file.type || typeFromExt(ext);
+  return new Blob([buffer], { type });
+}
+
+export function typeFromExt(value = ''): string {
+  const type = mimeRev[value.toLowerCase()];
+  return type || (value ? 'raw/' + value : 'raw-no/no');
+}
+
+export function extFromType(value: string): string {
+  if (mime[value]) return mime[value];
+  if (value === 'raw-no/no') return '';
+  return value.replace(/^raw\//, '');
 }

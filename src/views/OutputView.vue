@@ -36,7 +36,7 @@ async function onSubmit() {
     console.log(request.status, request.response);
     if (request.status >= 200 && request.status < 300) {
       const blob = await decryptBlob(request.response, secret.value);
-      if (request.response.type === 'text/plain') {
+      if (blob.type === 'text/plain') {
         output.value = await blob.text();
         loaded.value = true;
         setTimeout(() => {

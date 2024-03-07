@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { encryptBlob } from '@/plugins/blob';
+import { encryptBlob, fileToBlob } from '@/plugins/blob';
 import { placeholder } from '@/plugins/const';
 import { md5 } from '@/plugins/crypto';
 import { useRouteStore } from '@/stores/route';
@@ -67,13 +67,15 @@ async function onSubmit() {
   const formdata = new FormData();
   if (fileEl.value?.files?.length) {
     const [file] = fileEl.value.files;
-    const blob = await encryptBlob(file, secret.value);
-    formdata.append('file', blob);
+    const blob = await fileToBlob(file);
+    const blob2 = await encryptBlob(blob, secret.value);
+    formdata.append('file', blob2);
   } else if (input.value.length) {
     const file = new Blob([input.value], { type: 'text/plain' });
     const blob = await encryptBlob(file, secret.value);
     formdata.append('file', blob);
   } else {
+    error.value = true;
     loader.value = false;
     return;
   }
@@ -129,7 +131,7 @@ async function onSubmit() {
         <option value="86400">24 H</option>
         <option value="43200">12 H</option>
         <option value="3600">60 M</option>
-        <option value="300">15 M</option>
+        <option value="900">15 M</option>
       </select>
       <label class="checkbox">
         <input type="checkbox" tabindex="-1" v-model="compact" />
