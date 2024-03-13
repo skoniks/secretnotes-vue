@@ -1,4 +1,3 @@
-import { mime, mimeRev } from './const';
 import { decrypt, encrypt } from './crypto';
 
 export function base64ToBlob(data: string): Promise<Blob> {
@@ -39,17 +38,11 @@ export async function decryptBlob(data: Blob, key: string): Promise<Blob> {
 export async function fileToBlob(file: File): Promise<Blob> {
   const buffer = await file.arrayBuffer();
   const [, ext] = file.name.match(/\.([^.]+)$/) || [];
-  const type = file.type || typeFromExt(ext);
+  const type = ext ? 'raw/' + ext : 'raw-no/no';
   return new Blob([buffer], { type });
 }
 
-export function typeFromExt(value = ''): string {
-  const type = mimeRev[value.toLowerCase()];
-  return type || (value ? 'raw/' + value : 'raw-no/no');
-}
-
 export function extFromType(value: string): string {
-  if (mime[value]) return mime[value];
   if (value === 'raw-no/no') return '';
   return value.replace(/^raw\//, '');
 }

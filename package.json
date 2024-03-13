@@ -13,7 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@fontsource/noto-sans": "^5.0.19",
+    "@fontsource/noto-sans": "^5.0.20",
     "@fontsource/noto-sans-runic": "^5.0.19",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
@@ -26,14 +26,14 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.11.27",
     "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.22.0",
+    "eslint-plugin-vue": "^9.23.0",
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.2.5",
     "sass": "^1.71.1",
@@ -43,8 +43,8 @@
     "stylelint-config-recommended-scss": "^14.0.0",
     "stylelint-config-recommended-vue": "^1.5.0",
     "stylelint-prettier": "^5.0.0",
-    "typescript": "~5.3.3",
-    "vite": "^5.1.5",
-    "vue-tsc": "^2.0.5"
+    "typescript": "~5.4.2",
+    "vite": "^5.1.6",
+    "vue-tsc": "^2.0.6"
   }
 }
