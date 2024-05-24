@@ -17,12 +17,19 @@ export function blobToBase64(data: Blob): Promise<string> {
 }
 
 export function saveBlob(data: Blob, name: string) {
-  const ext = extFromType(data.type);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(data);
-  a.download = name + (ext ? '.' + ext : '');
-  document.body.appendChild(a), a.click();
-  document.body.removeChild(a);
+  const [type, ext] = data.type.split('+');
+  if (type.startsWith('image')) {
+    data.arrayBuffer().then((buffer) => {
+      const blob = new Blob([buffer], { type });
+      window.open(URL.createObjectURL(blob));
+    });
+  } else {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(data);
+    a.download = name + (ext ? '.' + ext : '');
+    document.body.appendChild(a), a.click();
+    document.body.removeChild(a);
+  }
 }
 
 export async function encryptBlob(data: Blob, key: string): Promise<Blob> {
@@ -38,11 +45,6 @@ export async function decryptBlob(data: Blob, key: string): Promise<Blob> {
 export async function fileToBlob(file: File): Promise<Blob> {
   const buffer = await file.arrayBuffer();
   const [, ext] = file.name.match(/\.([^.]+)$/) || [];
-  const type = ext ? 'raw/' + ext : 'raw-no/no';
+  const type = [file.type, ext ?? ''].join('+');
   return new Blob([buffer], { type });
-}
-
-export function extFromType(value: string): string {
-  if (value === 'raw-no/no') return '';
-  return value.replace(/^raw\//, '');
 }
