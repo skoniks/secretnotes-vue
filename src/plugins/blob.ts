@@ -17,19 +17,12 @@ export function blobToBase64(data: Blob): Promise<string> {
 }
 
 export function saveBlob(data: Blob, name: string) {
-  const [type, ext] = data.type.split('+');
-  if (type.startsWith('image')) {
-    data.arrayBuffer().then((buffer) => {
-      const blob = new Blob([buffer], { type });
-      window.open(URL.createObjectURL(blob));
-    });
-  } else {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(data);
-    a.download = name + (ext ? '.' + ext : '');
-    document.body.appendChild(a), a.click();
-    document.body.removeChild(a);
-  }
+  const [, ext] = data.type.split('+');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(data);
+  a.download = name + (ext ? '.' + ext : '');
+  document.body.appendChild(a), a.click();
+  document.body.removeChild(a);
 }
 
 export async function encryptBlob(data: Blob, key: string): Promise<Blob> {

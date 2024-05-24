@@ -12,6 +12,7 @@ const { error, loader, progress } = storeToRefs(useSecretStore());
 
 const output = ref('');
 const secret = ref('');
+const image = ref(false);
 const loaded = ref(false);
 const secretEl = ref<HTMLInputElement>();
 const inputEl = ref<HTMLTextAreaElement>();
@@ -44,6 +45,13 @@ async function onSubmit() {
           inputEl.value.style.height = 'auto';
           inputEl.value.style.height = inputEl.value.scrollHeight + 'px';
         });
+      } else if (blob.type.startsWith('image')) {
+        const [type] = blob.type.split('+');
+        const buffer = await blob.arrayBuffer();
+        const data = new Blob([buffer], { type });
+        output.value = URL.createObjectURL(data);
+        image.value = true;
+        loaded.value = true;
       } else {
         loaded.value = true;
         saveBlob(blob, name || 'file');
@@ -60,16 +68,21 @@ async function onSubmit() {
   request.responseType = 'blob';
   request.send(formdata);
 }
+
+function onImage() {
+  window.open(output.value);
+}
 </script>
 
 <template>
   <section>
+    <img v-show="image" :src="output" @click="onImage" />
     <textarea
       rows="2"
       ref="inputEl"
       readonly="true"
       spellcheck="false"
-      v-show="loaded"
+      v-show="loaded && !image"
       :value="output"
     ></textarea>
     <input
@@ -94,6 +107,14 @@ section {
   display: flex;
   flex-flow: column;
   row-gap: 1em;
+  > img {
+    width: 100%;
+    object-fit: contain;
+    overflow: hidden;
+    border: 1px solid #2688eb;
+    border-radius: 0.5em;
+    cursor: pointer;
+  }
   > textarea {
     min-height: 4.5rem;
     max-height: 18em;
