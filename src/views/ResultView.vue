@@ -2,7 +2,7 @@
 import { placeholder } from '@/plugins/const';
 import { useRouteStore } from '@/stores/route';
 import { useSecretStore } from '@/stores/secret';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faShare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { storeToRefs } from 'pinia';
 import { toDataURL } from 'qrcode';
@@ -25,6 +25,11 @@ function onCopy() {
   if (inputEl.value) inputEl.value.select();
   navigator.clipboard.writeText(url.value);
 }
+
+function onShare() {
+  const title = 'Secret ' + result.value;
+  navigator.share({ title, url: url.value });
+}
 </script>
 
 <template>
@@ -39,6 +44,9 @@ function onCopy() {
       />
       <button class="alt" @click="onCopy">
         <FontAwesomeIcon :icon="faCopy" />
+      </button>
+      <button class="alt" @click="onShare">
+        <FontAwesomeIcon :icon="faShare" />
       </button>
     </div>
     <button class="alt" @click="goto('input')">
